@@ -1,0 +1,195 @@
+{
+  "benchmark_version": "1.0.0",
+  "timestamp": "2025-11-25T16:15:27Z",
+  "system_name": "bud_fcsp",
+  "duration_seconds": 9.331,
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3080",
+    "compute_capability": "8.6",
+    "total_memory_mb": 9866,
+    "sm_count": 68
+  },
+  "hami_detected": false,
+  "metrics": [
+    {
+      "id": "OH-001",
+      "name": "Kernel Launch Latency",
+      "unit": "us",
+      "success": true,
+      "value": 4.485000,
+      "stats": {
+        "mean": 4.538745,
+        "std_dev": 0.282446,
+        "min": 4.048000,
+        "max": 9.867000,
+        "p50": 4.485000,
+        "p90": 4.826000,
+        "p95": 4.954000,
+        "p99": 5.073000,
+        "count": 1000
+      }
+    },
+    {
+      "id": "OH-002",
+      "name": "Memory Allocation Latency",
+      "unit": "us",
+      "success": true,
+      "value": 143.260000,
+      "stats": {
+        "mean": 591.697155,
+        "std_dev": 719.096467,
+        "min": 38.217000,
+        "max": 2112.158000,
+        "p50": 143.260000,
+        "p90": 1989.777000,
+        "p95": 2014.694000,
+        "p99": 2026.301000,
+        "count": 600
+      }
+    },
+    {
+      "id": "OH-003",
+      "name": "Memory Free Latency",
+      "unit": "us",
+      "success": true,
+      "value": 442.828000,
+      "stats": {
+        "mean": 455.790873,
+        "std_dev": 436.510545,
+        "min": 30.067000,
+        "max": 2518.447000,
+        "p50": 442.828000,
+        "p90": 1107.445000,
+        "p95": 1108.957000,
+        "p99": 1128.162000,
+        "count": 300
+      }
+    },
+    {
+      "id": "OH-004",
+      "name": "Context Creation Overhead",
+      "unit": "us",
+      "success": true,
+      "value": 82868.954000,
+      "stats": {
+        "mean": 82966.203600,
+        "std_dev": 3351.834839,
+        "min": 76838.419000,
+        "max": 91020.847000,
+        "p50": 82868.954000,
+        "p90": 88305.387000,
+        "p95": 91020.847000,
+        "p99": 91020.847000,
+        "count": 20
+      }
+    },
+    {
+      "id": "OH-005",
+      "name": "API Interception Overhead",
+      "unit": "ns",
+      "success": true,
+      "value": 18.000000,
+      "stats": {
+        "mean": 18.930600,
+        "std_dev": 6.040214,
+        "min": 17.000000,
+        "max": 556.000000,
+        "p50": 18.000000,
+        "p90": 19.000000,
+        "p95": 23.000000,
+        "p99": 27.000000,
+        "count": 10000
+      }
+    },
+    {
+      "id": "OH-006",
+      "name": "Shared Region Lock Contention",
+      "unit": "us",
+      "success": true,
+      "value": 88.865000,
+      "stats": {
+        "mean": 1741.322018,
+        "std_dev": 12064.433739,
+        "min": 0.859000,
+        "max": 86779.056000,
+        "p50": 1.341000,
+        "p90": 51.315000,
+        "p95": 88.865000,
+        "p99": 86275.389000,
+        "count": 400
+      }
+    },
+    {
+      "id": "OH-007",
+      "name": "Memory Tracking Overhead",
+      "unit": "ns",
+      "success": true,
+      "value": 0.000000,
+      "stats": {
+        "mean": 0.000000,
+        "std_dev": 0.000000,
+        "min": 0.000000,
+        "max": 0.000000,
+        "p50": 0.000000,
+        "p90": 0.000000,
+        "p95": 0.000000,
+        "p99": 0.000000,
+        "count": 100
+      }
+    },
+    {
+      "id": "OH-008",
+      "name": "Rate Limiter Overhead",
+      "unit": "ns",
+      "success": true,
+      "value": 1339.000000,
+      "stats": {
+        "mean": 1661.310484,
+        "std_dev": 5749.237685,
+        "min": 1250.000000,
+        "max": 177762.000000,
+        "p50": 1339.000000,
+        "p90": 1543.000000,
+        "p95": 1726.000000,
+        "p99": 2111.000000,
+        "count": 992
+      }
+    },
+    {
+      "id": "OH-009",
+      "name": "NVML Polling Overhead",
+      "unit": "%",
+      "success": true,
+      "value": 0.481560,
+      "stats": {
+        "mean": 0.481560,
+        "std_dev": 0.106450,
+        "min": 0.370300,
+        "max": 0.651600,
+        "p50": 0.434000,
+        "p90": 0.651600,
+        "p95": 0.651600,
+        "p99": 0.651600,
+        "count": 5
+      }
+    },
+    {
+      "id": "OH-010",
+      "name": "Total Throughput Degradation",
+      "unit": "%",
+      "success": true,
+      "value": 0.000000,
+      "stats": {
+        "mean": 2.092744,
+        "std_dev": 0.065771,
+        "min": 2.026375,
+        "max": 2.442342,
+        "p50": 2.064387,
+        "p90": 2.164028,
+        "p95": 2.262574,
+        "p99": 2.442342,
+        "count": 100
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+# Build artifacts
+build/
+*.o
+*.so
+*.a
+*.out
+*.exe
+
+# Benchmark results in build directory (keep results/ and benchmarks/ in root)
+build/benchmarks/
+build/results/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile.user
+*.cmake
+!CMakeLists.txt
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+*.backup
+.*.swp
+
+# Core dumps
+core
+core.*
+
+# Python (if any helper scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Test output
+test_output/
+*.test
+
+# Editor backups
+*~
+\#*\#
+.\#*
