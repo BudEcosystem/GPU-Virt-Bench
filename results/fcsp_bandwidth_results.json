@@ -1,0 +1,87 @@
+{
+  "benchmark_version": "1.0.0",
+  "timestamp": "2025-11-26T20:30:08Z",
+  "system_name": "fcsp_bandwidth",
+  "duration_seconds": 1.089,
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3080",
+    "compute_capability": "8.6",
+    "total_memory_mb": 4933,
+    "sm_count": 68
+  },
+  "hami_detected": false,
+  "metrics": [
+    {
+      "id": "BW-001",
+      "name": "Memory Bandwidth Isolation",
+      "unit": "%",
+      "success": true,
+      "value": 78.607394,
+      "stats": {
+        "mean": 78.607394,
+        "std_dev": 4.678387,
+        "min": 0.000000,
+        "max": 0.000000,
+        "p50": 0.000000,
+        "p90": 0.000000,
+        "p95": 0.000000,
+        "p99": 0.000000,
+        "count": 20
+      }
+    },
+    {
+      "id": "BW-002",
+      "name": "Bandwidth Fairness Index",
+      "unit": "ratio",
+      "success": true,
+      "value": 0.999401,
+      "stats": {
+        "mean": 0.999401,
+        "std_dev": 0.000090,
+        "min": 0.000000,
+        "max": 0.000000,
+        "p50": 0.000000,
+        "p90": 0.000000,
+        "p95": 0.000000,
+        "p99": 0.000000,
+        "count": 20
+      }
+    },
+    {
+      "id": "BW-003",
+      "name": "Memory Bus Saturation Point",
+      "unit": "streams",
+      "success": true,
+      "value": 1.000000,
+      "stats": {
+        "mean": 1.000000,
+        "std_dev": 0.000000,
+        "min": 0.000000,
+        "max": 0.000000,
+        "p50": 0.000000,
+        "p90": 0.000000,
+        "p95": 0.000000,
+        "p99": 0.000000,
+        "count": 8
+      }
+    },
+    {
+      "id": "BW-004",
+      "name": "Bandwidth Interference Impact",
+      "unit": "%",
+      "success": true,
+      "value": 77.612249,
+      "stats": {
+        "mean": 77.612249,
+        "std_dev": 0.923353,
+        "min": 0.000000,
+        "max": 0.000000,
+        "p50": 0.000000,
+        "p90": 0.000000,
+        "p95": 0.000000,
+        "p99": 0.000000,
+        "count": 20
+      }
+    }
+  ]
+}

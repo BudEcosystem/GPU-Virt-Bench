@@ -149,6 +149,7 @@ typedef struct {
     double isolation_score;
     double llm_score;
     double overall_score;
+    double mig_parity_percent;
 } benchmark_result_t;
 
 /*
@@ -480,6 +481,12 @@ void bench_run_fragmentation(bench_config_t *config, bench_result_t *results, in
 
 /* Error recovery metrics - from error.cu */
 void bench_run_error(bench_config_t *config, bench_result_t *results, int *count);
+
+/* Paper-inspired feature metrics - from paper_features.cu */
+void bench_run_paper_features(bench_config_t *config, metric_result_t *results, int *count);
+
+/* FCSP advanced feature metrics - from fcsp_features.cu */
+void bench_run_fcsp_features(bench_config_t *config, metric_result_t *results, int *count);
 
 /* Individual metric benchmarks */
 int bench_kernel_launch_latency(metric_result_t *result);

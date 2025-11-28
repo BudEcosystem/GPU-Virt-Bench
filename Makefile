@@ -22,7 +22,7 @@ CUDA_ARCH := -gencode arch=compute_70,code=sm_70 \
              -gencode arch=compute_86,code=sm_86
 
 # Libraries
-LDFLAGS := -L$(CUDA_LIB) -lcudart -lnvml -lm -lpthread -ldl
+LDFLAGS := -L$(CUDA_LIB) -L/usr/lib/x86_64-linux-gnu -lcudart -lnvidia-ml -lm -lpthread -ldl
 
 # Directories
 BUILD_DIR := build
@@ -39,7 +39,15 @@ C_SOURCES := $(SRC_DIR)/main.c \
 CU_SOURCES := $(SRC_DIR)/utils/timing.cu \
               $(SRC_DIR)/metrics/overhead.cu \
               $(SRC_DIR)/metrics/isolation.cu \
-              $(SRC_DIR)/metrics/llm.cu
+              $(SRC_DIR)/metrics/llm.cu \
+              $(SRC_DIR)/metrics/bandwidth.cu \
+              $(SRC_DIR)/metrics/cache.cu \
+              $(SRC_DIR)/metrics/error.cu \
+              $(SRC_DIR)/metrics/fragmentation.cu \
+              $(SRC_DIR)/metrics/nccl.cu \
+              $(SRC_DIR)/metrics/pcie.cu \
+              $(SRC_DIR)/metrics/scheduling.cu \
+              $(SRC_DIR)/metrics/paper_features.cu
 
 # Object files
 C_OBJECTS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(C_SOURCES))

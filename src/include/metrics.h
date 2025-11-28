@@ -19,8 +19,8 @@ extern "C" {
  * ============================================================================
  */
 
-/* Total number of defined metrics (30 original + 26 new = 56) */
-#define TOTAL_METRIC_COUNT 56
+/* Total number of defined metrics (30 original + 26 new + 6 paper + 12 fcsp = 74) */
+#define TOTAL_METRIC_COUNT 74
 
 /* Overhead metrics: OH-001 to OH-010 */
 #define METRIC_OH_KERNEL_LAUNCH_LATENCY     "OH-001"
@@ -116,6 +116,28 @@ extern "C" {
 /* Aliases for compatibility */
 #define METRIC_ERR_CASCADING                METRIC_ERR_RECOVERY_TIME
 #define METRIC_ERR_RESET_REQUIRED           METRIC_ERR_GRACEFUL_DEGRADATION
+
+/* Paper-inspired feature metrics: PAPER-001 to PAPER-006 */
+#define METRIC_PAPER_GRAPH_COST_ACCURACY     "PAPER-001"
+#define METRIC_PAPER_COMPUTE_CLASSIFICATION  "PAPER-002"
+#define METRIC_PAPER_IO_CLASSIFICATION       "PAPER-003"
+#define METRIC_PAPER_GRAPH_COST_PROPORTION   "PAPER-004"
+#define METRIC_PAPER_WORKLOAD_FAIRNESS       "PAPER-005"
+#define METRIC_PAPER_EXEC_MODEL_SPEEDUP      "PAPER-006"
+
+/* FCSP Advanced Feature metrics: FCSP-001 to FCSP-012 */
+#define METRIC_FCSP_AFFINITY_COMPLEMENTARY   "FCSP-001"
+#define METRIC_FCSP_AFFINITY_CONFLICTING     "FCSP-002"
+#define METRIC_FCSP_ADAPTIVE_SM_RESPONSE     "FCSP-003"
+#define METRIC_FCSP_ADAPTIVE_SM_EFFICIENCY   "FCSP-004"
+#define METRIC_FCSP_UVM_ALLOC_OVERHEAD       "FCSP-005"
+#define METRIC_FCSP_UVM_PREFETCH_EFFECT      "FCSP-006"
+#define METRIC_FCSP_UVM_TRANSFER_OVERLAP     "FCSP-007"
+#define METRIC_FCSP_UVM_MEMORY_PRESSURE      "FCSP-008"
+#define METRIC_FCSP_STREAM_ACTIVATION        "FCSP-009"
+#define METRIC_FCSP_ATTENTION_PATTERN        "FCSP-010"
+#define METRIC_FCSP_FFN_PATTERN              "FCSP-011"
+#define METRIC_FCSP_MIXED_WORKLOAD           "FCSP-012"
 
 /*
  * ============================================================================
@@ -607,6 +629,154 @@ static const metric_definition_t METRIC_DEFINITIONS[TOTAL_METRIC_COUNT] = {
         .unit = METRIC_UNIT_PERCENTAGE,
         .higher_is_better = true,
     },
+
+    /* ========== PAPER-INSPIRED FEATURE METRICS (PAPER-001 to PAPER-006) ========== */
+    {
+        .id = "PAPER-001",
+        .name = "Graph Cost Pre-computation Accuracy",
+        .description = "Measures if pre-computed CUDA Graph costs reflect actual complexity. Based on paper insight of front-loading cost calculation.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = true,
+    },
+    {
+        .id = "PAPER-002",
+        .name = "Compute-Intensive Classification",
+        .description = "Multi-stream efficiency for compute-bound kernels. Should be ~100% (no benefit from concurrency).",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = false,
+    },
+    {
+        .id = "PAPER-003",
+        .name = "IO-Intensive Classification",
+        .description = "Multi-stream efficiency for IO-bound kernels. Should be >100% (benefits from concurrency per paper).",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = true,
+    },
+    {
+        .id = "PAPER-004",
+        .name = "Graph Launch Cost Proportionality",
+        .description = "Ratio of complex to simple graph launch times. Validates pre-computed cost tracking.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_RATIO,
+        .higher_is_better = true,
+    },
+    {
+        .id = "PAPER-005",
+        .name = "Workload-Aware Throttling Fairness",
+        .description = "Jain's fairness index for different workload types under adaptive throttling.",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_RATIO,
+        .higher_is_better = true,
+    },
+    {
+        .id = "PAPER-006",
+        .name = "Execution Model Speedup",
+        .description = "Speedup from concurrent vs sequential execution. Paper reports 2-6x for balanced workloads.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_RATIO,
+        .higher_is_better = true,
+    },
+
+    /* ========== FCSP ADVANCED FEATURE METRICS (FCSP-001 to FCSP-012) ========== */
+    {
+        .id = "FCSP-001",
+        .name = "Affinity Complementary Efficiency",
+        .description = "Efficiency when running compute-heavy and memory-heavy workloads concurrently. >100% indicates benefit from affinity scheduling.",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = true,
+    },
+    {
+        .id = "FCSP-002",
+        .name = "Affinity Conflict Detection",
+        .description = "Slowdown ratio when running two compute-heavy workloads. ~2.0x indicates correct conflict detection and serialization.",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_RATIO,
+        .higher_is_better = false,
+    },
+    {
+        .id = "FCSP-003",
+        .name = "Adaptive SM Response Time",
+        .description = "Time for heavy workload after light workload with adaptive SM. Lower indicates faster adaptation to available resources.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_MILLISECONDS,
+        .higher_is_better = false,
+    },
+    {
+        .id = "FCSP-004",
+        .name = "Adaptive SM Efficiency",
+        .description = "Throughput achieved with bursty multi-stream workload. Higher indicates better utilization of available SM resources.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_BANDWIDTH,
+        .higher_is_better = true,
+    },
+    {
+        .id = "FCSP-005",
+        .name = "UVM Allocation Overhead",
+        .description = "Ratio of UVM allocation time vs native allocation. 1.0x = same as native, higher = more overhead.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_RATIO,
+        .higher_is_better = false,
+    },
+    {
+        .id = "FCSP-006",
+        .name = "UVM Prefetch Effectiveness",
+        .description = "Speedup from prefetching vs page faults. >1.0x indicates prefetch eliminates page fault latency.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_RATIO,
+        .higher_is_better = true,
+    },
+    {
+        .id = "FCSP-007",
+        .name = "UVM Transfer Overlap Efficiency",
+        .description = "Efficiency of overlapping data transfers with compute. >100% indicates transfers hidden behind compute.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = true,
+    },
+    {
+        .id = "FCSP-008",
+        .name = "UVM Memory Pressure Handling",
+        .description = "Execution time under GPU memory oversubscription. Tests graceful handling of memory pressure.",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_MILLISECONDS,
+        .higher_is_better = false,
+    },
+    {
+        .id = "FCSP-009",
+        .name = "Stream Activation Latency",
+        .description = "Time to reactivate an idle stream including prefetch. Lower indicates faster stream reactivation.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_MILLISECONDS,
+        .higher_is_better = false,
+    },
+    {
+        .id = "FCSP-010",
+        .name = "Attention Pattern Throughput",
+        .description = "TFLOPS achieved on transformer attention pattern workload. Tests small-grid large-block kernel efficiency.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_FLOPS,
+        .higher_is_better = true,
+    },
+    {
+        .id = "FCSP-011",
+        .name = "FFN Pattern Throughput",
+        .description = "TFLOPS achieved on transformer FFN pattern workload. Tests large-grid GEMM kernel efficiency.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_FLOPS,
+        .higher_is_better = true,
+    },
+    {
+        .id = "FCSP-012",
+        .name = "Mixed Workload Orchestration",
+        .description = "Operations per second with concurrent compute, memory, and balanced workloads. Tests overall system orchestration.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_THROUGHPUT,
+        .higher_is_better = true,
+    },
 };
 
 /*
@@ -685,6 +855,26 @@ static const mig_expected_value_t MIG_EXPECTED_VALUES[] = {
     {"ERR-001", 10.0, 50.0, "MIG ~10ms error recovery"},
     {"ERR-002", 0.0, 0.0, "MIG no cascading failures"},
     {"ERR-003", 0.0, 0.0, "MIG no reset required"},
+    /* Paper-inspired feature metrics */
+    {"PAPER-001", 95.0, 10.0, "Graph cost accuracy ~95%"},
+    {"PAPER-002", 100.0, 20.0, "Compute workload ~100% multi-stream efficiency"},
+    {"PAPER-003", 200.0, 50.0, "IO workload ~200% multi-stream efficiency (paper: 4-6x possible)"},
+    {"PAPER-004", 10.0, 100.0, "Complex/simple graph ratio ~10x"},
+    {"PAPER-005", 0.95, 5.0, "Workload fairness ~0.95 Jain's index"},
+    {"PAPER-006", 3.0, 50.0, "Execution model speedup ~3x (paper: 2-6x)"},
+    /* FCSP advanced feature metrics */
+    {"FCSP-001", 150.0, 30.0, "Affinity complementary ~150% efficiency (compute+memory overlap)"},
+    {"FCSP-002", 2.0, 20.0, "Affinity conflict ~2.0x slowdown (correct serialization)"},
+    {"FCSP-003", 10.0, 50.0, "Adaptive SM response ~10ms"},
+    {"FCSP-004", 100.0, 30.0, "Adaptive SM efficiency ~100 GB/s"},
+    {"FCSP-005", 1.5, 50.0, "UVM alloc overhead ~1.5x vs native"},
+    {"FCSP-006", 5.0, 50.0, "UVM prefetch ~5x speedup vs page faults"},
+    {"FCSP-007", 150.0, 30.0, "UVM transfer overlap ~150% efficiency"},
+    {"FCSP-008", 50.0, 100.0, "UVM memory pressure ~50ms under oversubscription"},
+    {"FCSP-009", 20.0, 50.0, "Stream activation ~20ms with prefetch"},
+    {"FCSP-010", 1.0, 100.0, "Attention pattern ~1 TFLOPS (varies by GPU)"},
+    {"FCSP-011", 1.0, 100.0, "FFN pattern ~1 TFLOPS (varies by GPU)"},
+    {"FCSP-012", 100.0, 50.0, "Mixed workload ~100 ops/sec"},
 };
 
 #define MIG_EXPECTED_VALUE_COUNT (sizeof(MIG_EXPECTED_VALUES) / sizeof(MIG_EXPECTED_VALUES[0]))

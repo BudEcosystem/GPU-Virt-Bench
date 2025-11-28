@@ -619,6 +619,12 @@ int bench_multi_stream_performance(metric_result_t *result) {
 
     const int num_stages = 4;  /* Pipeline stages */
     const int iterations = 20;
+    const int kernels_per_stage = 50;  /* Launch multiple kernels to reduce timing noise */
+
+    /* Use larger problem sizes to ensure kernels take measurable time (>1ms each) */
+    const int M = 512;
+    const int N = 512;
+    const int K = 512;
 
     result->raw_values = (double*)malloc(sizeof(double) * iterations);
     if (result->raw_values == NULL) {
@@ -628,60 +634,110 @@ int bench_multi_stream_performance(metric_result_t *result) {
     result->raw_count = 0;
 
     cudaStream_t streams[num_stages];
-    float *d_data[num_stages];
+    float *d_input[num_stages];
+    float *d_weight[num_stages];
+    float *d_output[num_stages];
 
+    /* Allocate larger buffers for meaningful compute */
     for (int i = 0; i < num_stages; i++) {
         cudaStreamCreate(&streams[i]);
-        cudaMalloc(&d_data[i], sizeof(float) * 4096);
+        cudaMalloc(&d_input[i], sizeof(float) * M * K);
+        cudaMalloc(&d_weight[i], sizeof(float) * K * N);
+        cudaMalloc(&d_output[i], sizeof(float) * M * N);
     }
 
-    /* Baseline: sequential execution */
+    dim3 block(16, 16);
+    dim3 grid((N + block.x - 1) / block.x, (M + block.y - 1) / block.y);
+
+    /* Warmup all streams */
+    for (int s = 0; s < num_stages; s++) {
+        for (int w = 0; w < 5; w++) {
+            kernel_ffn_simulation<<<grid, block, 0, streams[s]>>>(
+                d_input[s], d_weight[s], d_output[s], M, N, K);
+        }
+    }
+    cudaDeviceSynchronize();
+
+    /* Use CUDA events for accurate GPU timing (eliminates CPU-side jitter) */
+    cudaEvent_t start_event, stop_event;
+    cudaEventCreate(&start_event);
+    cudaEventCreate(&stop_event);
+
+    /* Baseline: sequential execution on single stream
+     * This measures actual kernel time without inter-kernel sync overhead */
     double sequential_time = 0.0;
     for (int iter = 0; iter < iterations; iter++) {
-        timing_result_t t;
-        timing_start(&t);
+        cudaEventRecord(start_event, streams[0]);
 
+        /* Launch all work sequentially on stream 0 */
         for (int stage = 0; stage < num_stages; stage++) {
-            kernel_ffn_simulation<<<64, 256, 0, streams[0]>>>(
-                d_data[stage], d_data[stage], d_data[stage], 64, 64, 64);
-            cudaStreamSynchronize(streams[0]);
+            for (int k = 0; k < kernels_per_stage; k++) {
+                kernel_ffn_simulation<<<grid, block, 0, streams[0]>>>(
+                    d_input[stage], d_weight[stage], d_output[stage], M, N, K);
+            }
         }
 
-        timing_stop(&t);
-        sequential_time += t.elapsed_ms;
+        cudaEventRecord(stop_event, streams[0]);
+        cudaEventSynchronize(stop_event);
+
+        float elapsed_ms;
+        cudaEventElapsedTime(&elapsed_ms, start_event, stop_event);
+        sequential_time += elapsed_ms;
     }
     double seq_mean = sequential_time / iterations;
 
-    /* Concurrent: all stages in parallel */
+    /* Concurrent: distribute work across all streams */
     double concurrent_time = 0.0;
     for (int iter = 0; iter < iterations; iter++) {
-        timing_result_t t;
-        timing_start(&t);
+        cudaEventRecord(start_event, 0);
 
+        /* Launch work on all streams in parallel */
         for (int stage = 0; stage < num_stages; stage++) {
-            kernel_ffn_simulation<<<64, 256, 0, streams[stage]>>>(
-                d_data[stage], d_data[stage], d_data[stage], 64, 64, 64);
+            for (int k = 0; k < kernels_per_stage; k++) {
+                kernel_ffn_simulation<<<grid, block, 0, streams[stage]>>>(
+                    d_input[stage], d_weight[stage], d_output[stage], M, N, K);
+            }
         }
 
+        /* Wait for all streams */
         for (int stage = 0; stage < num_stages; stage++) {
             cudaStreamSynchronize(streams[stage]);
         }
 
-        timing_stop(&t);
-        concurrent_time += t.elapsed_ms;
+        cudaEventRecord(stop_event, 0);
+        cudaEventSynchronize(stop_event);
+
+        float elapsed_ms;
+        cudaEventElapsedTime(&elapsed_ms, start_event, stop_event);
+        concurrent_time += elapsed_ms;
     }
     double concurrent_mean = concurrent_time / iterations;
 
-    /* Efficiency: ideal speedup is num_stages */
+    cudaEventDestroy(start_event);
+    cudaEventDestroy(stop_event);
+
+    /* Efficiency calculation:
+     * - Ideal: concurrent takes same time as sequential (4x work in parallel)
+     * - efficiency = (seq_time / conc_time) / num_stages * 100
+     * - 100% = perfect parallel scaling
+     * - 25% = no parallelism (concurrent = 4x sequential)
+     * - Cap at 100% to avoid >100% due to GPU boost states */
     double speedup = seq_mean / concurrent_mean;
     double efficiency = (speedup / num_stages) * 100.0;
+
+    /* Cap efficiency at 100% - values > 100% indicate measurement noise */
+    if (efficiency > 100.0) {
+        efficiency = 100.0;
+    }
 
     for (int i = 0; i < iterations; i++) {
         result->raw_values[result->raw_count++] = efficiency;
     }
 
     for (int i = 0; i < num_stages; i++) {
-        cudaFree(d_data[i]);
+        cudaFree(d_input[i]);
+        cudaFree(d_weight[i]);
+        cudaFree(d_output[i]);
         cudaStreamDestroy(streams[i]);
     }
 
@@ -690,8 +746,8 @@ int bench_multi_stream_performance(metric_result_t *result) {
     result->timestamp_ns = timing_get_ns();
     result->valid = true;
 
-    LOG_INFO("LLM-006 Multi-Stream Efficiency: %.2f%% (speedup %.2fx vs ideal %dx)",
-             result->stats.mean, speedup, num_stages);
+    LOG_INFO("LLM-006 Multi-Stream Efficiency: %.2f%% (seq=%.2fms, conc=%.2fms, speedup %.2fx vs ideal %dx)",
+             result->stats.mean, seq_mean, concurrent_mean, speedup, num_stages);
 
     return 0;
 }

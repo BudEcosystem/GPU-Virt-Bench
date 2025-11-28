@@ -1,0 +1,555 @@
+{
+  "benchmark_version": "1.0.0",
+  "timestamp": "2025-11-27T06:25:56Z",
+  "system_name": "hami_slice25_t1",
+  "duration_seconds": 22.715,
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3080",
+    "compute_capability": "8.6",
+    "total_memory_mb": 9866,
+    "sm_count": 68
+  },
+  "hami_detected": true,
+  "metrics": [
+    {
+      "id": "OH-001",
+      "name": "Kernel Launch Latency",
+      "unit": "us",
+      "success": true,
+      "value": 4.899000,
+      "stats": {
+        "mean": 6.286125,
+        "std_dev": 17.118646,
+        "min": 4.049000,
+        "max": 397.190000,
+        "p50": 4.899000,
+        "p90": 5.248000,
+        "p95": 5.469000,
+        "p99": 22.197000,
+        "count": 1000
+      }
+    },
+    {
+      "id": "OH-002",
+      "name": "Memory Allocation Latency",
+      "unit": "us",
+      "success": true,
+      "value": 138.547000,
+      "stats": {
+        "mean": 721.382275,
+        "std_dev": 1632.892885,
+        "min": 40.077000,
+        "max": 10417.526000,
+        "p50": 138.547000,
+        "p90": 1055.133000,
+        "p95": 1057.804000,
+        "p99": 8319.493000,
+        "count": 600
+      }
+    },
+    {
+      "id": "OH-003",
+      "name": "Memory Free Latency",
+      "unit": "us",
+      "success": true,
+      "value": 438.358000,
+      "stats": {
+        "mean": 508.223567,
+        "std_dev": 448.559206,
+        "min": 29.780000,
+        "max": 2535.622000,
+        "p50": 438.358000,
+        "p90": 1110.117000,
+        "p95": 1115.337000,
+        "p99": 1174.868000,
+        "count": 300
+      }
+    },
+    {
+      "id": "OH-004",
+      "name": "Context Creation Overhead",
+      "unit": "us",
+      "success": true,
+      "value": 85199.402000,
+      "stats": {
+        "mean": 85842.714700,
+        "std_dev": 2771.568071,
+        "min": 81512.859000,
+        "max": 91407.342000,
+        "p50": 85199.402000,
+        "p90": 91048.780000,
+        "p95": 91407.342000,
+        "p99": 91407.342000,
+        "count": 20
+      }
+    },
+    {
+      "id": "OH-005",
+      "name": "API Interception Overhead",
+      "unit": "ns",
+      "success": true,
+      "value": 42.000000,
+      "stats": {
+        "mean": 41.733600,
+        "std_dev": 1.015003,
+        "min": 40.000000,
+        "max": 86.000000,
+        "p50": 42.000000,
+        "p90": 43.000000,
+        "p95": 43.000000,
+        "p99": 43.000000,
+        "count": 10000
+      }
+    },
+    {
+      "id": "OH-006",
+      "name": "Shared Region Lock Contention",
+      "unit": "us",
+      "success": true,
+      "value": 446.600000,
+      "stats": {
+        "mean": 2044.547323,
+        "std_dev": 13165.764510,
+        "min": 0.907000,
+        "max": 97141.180000,
+        "p50": 50.495000,
+        "p90": 53.622000,
+        "p95": 446.600000,
+        "p99": 92943.210000,
+        "count": 400
+      }
+    },
+    {
+      "id": "OH-007",
+      "name": "Memory Tracking Overhead",
+      "unit": "ns",
+      "success": true,
+      "value": 0.000000,
+      "stats": {
+        "mean": 0.000000,
+        "std_dev": 0.000000,
+        "min": 0.000000,
+        "max": 0.000000,
+        "p50": 0.000000,
+        "p90": 0.000000,
+        "p95": 0.000000,
+        "p99": 0.000000,
+        "count": 100
+      }
+    },
+    {
+      "id": "OH-008",
+      "name": "Rate Limiter Overhead",
+      "unit": "ns",
+      "success": true,
+      "value": 2059.000000,
+      "stats": {
+        "mean": 2444.941532,
+        "std_dev": 7396.096840,
+        "min": 1232.000000,
+        "max": 216351.000000,
+        "p50": 2059.000000,
+        "p90": 2406.000000,
+        "p95": 2520.000000,
+        "p99": 16105.000000,
+        "count": 992
+      }
+    },
+    {
+      "id": "OH-009",
+      "name": "NVML Polling Overhead",
+      "unit": "%",
+      "success": true,
+      "value": 0.634560,
+      "stats": {
+        "mean": 0.634560,
+        "std_dev": 0.075880,
+        "min": 0.495700,
+        "max": 0.707800,
+        "p50": 0.646400,
+        "p90": 0.707800,
+        "p95": 0.707800,
+        "p99": 0.707800,
+        "count": 5
+      }
+    },
+    {
+      "id": "OH-010",
+      "name": "Total Throughput Degradation",
+      "unit": "%",
+      "success": true,
+      "value": 0.000000,
+      "stats": {
+        "mean": 2.183477,
+        "std_dev": 0.353907,
+        "min": 2.023280,
+        "max": 5.291549,
+        "p50": 2.079485,
+        "p90": 2.403238,
+        "p95": 2.437243,
+        "p99": 5.291549,
+        "count": 100
+      }
+    },
+    {
+      "id": "IS-001",
+      "name": "Memory Limit Accuracy",
+      "unit": "%",
+      "success": true,
+      "value": 92.110831,
+      "stats": {
+        "mean": 92.110831,
+        "std_dev": 0.000000,
+        "min": 92.110831,
+        "max": 92.110831,
+        "p50": 92.110831,
+        "p90": 92.110831,
+        "p95": 92.110831,
+        "p99": 92.110831,
+        "count": 20
+      }
+    },
+    {
+      "id": "IS-002",
+      "name": "Memory Limit Enforcement Time",
+      "unit": "us",
+      "success": true,
+      "value": 213.393000,
+      "stats": {
+        "mean": 1008.945860,
+        "std_dev": 5453.843358,
+        "min": 197.857000,
+        "max": 39184.684000,
+        "p50": 213.393000,
+        "p90": 326.879000,
+        "p95": 358.797000,
+        "p99": 39184.684000,
+        "count": 50
+      }
+    },
+    {
+      "id": "IS-003",
+      "name": "SM Utilization Accuracy",
+      "unit": "%",
+      "success": true,
+      "value": 94.400000,
+      "stats": {
+        "mean": 94.400000,
+        "std_dev": 13.879481,
+        "min": 60.000000,
+        "max": 100.000000,
+        "p50": 100.000000,
+        "p90": 100.000000,
+        "p95": 100.000000,
+        "p99": 100.000000,
+        "count": 50
+      }
+    },
+    {
+      "id": "IS-004",
+      "name": "SM Limit Response Time",
+      "unit": "ms",
+      "success": true,
+      "value": 88.441739,
+      "stats": {
+        "mean": 88.368546,
+        "std_dev": 0.501255,
+        "min": 87.352360,
+        "max": 89.158080,
+        "p50": 88.441739,
+        "p90": 89.158080,
+        "p95": 89.158080,
+        "p99": 89.158080,
+        "count": 10
+      }
+    },
+    {
+      "id": "IS-005",
+      "name": "Cross-Tenant Memory Isolation",
+      "unit": "bool",
+      "success": true,
+      "value": 1.000000,
+      "stats": {
+        "mean": 1.000000,
+        "std_dev": 0.000000,
+        "min": 1.000000,
+        "max": 1.000000,
+        "p50": 1.000000,
+        "p90": 1.000000,
+        "p95": 1.000000,
+        "p99": 1.000000,
+        "count": 1
+      }
+    },
+    {
+      "id": "IS-006",
+      "name": "Cross-Tenant Compute Isolation",
+      "unit": "%",
+      "success": true,
+      "value": 85.460787,
+      "stats": {
+        "mean": 85.460787,
+        "std_dev": 6.586066,
+        "min": 74.329793,
+        "max": 100.000000,
+        "p50": 86.460327,
+        "p90": 97.525398,
+        "p95": 100.000000,
+        "p99": 100.000000,
+        "count": 20
+      }
+    },
+    {
+      "id": "IS-007",
+      "name": "QoS Consistency",
+      "unit": "ratio",
+      "success": true,
+      "value": 0.014825,
+      "stats": {
+        "mean": 0.065288,
+        "std_dev": 0.000968,
+        "min": 0.064512,
+        "max": 0.071680,
+        "p50": 0.065536,
+        "p90": 0.065536,
+        "p95": 0.066528,
+        "p99": 0.071680,
+        "count": 100
+      }
+    },
+    {
+      "id": "IS-008",
+      "name": "Fairness Index",
+      "unit": "ratio",
+      "success": true,
+      "value": 0.987577,
+      "stats": {
+        "mean": 0.987577,
+        "std_dev": 0.007990,
+        "min": 0.965984,
+        "max": 1.000000,
+        "p50": 0.989360,
+        "p90": 0.999996,
+        "p95": 0.999998,
+        "p99": 1.000000,
+        "count": 50
+      }
+    },
+    {
+      "id": "IS-009",
+      "name": "Noisy Neighbor Impact",
+      "unit": "%",
+      "success": true,
+      "value": 14.759548,
+      "stats": {
+        "mean": 14.759548,
+        "std_dev": 7.770452,
+        "min": 7.723413,
+        "max": 31.813112,
+        "p50": 14.145092,
+        "p90": 26.588091,
+        "p95": 31.813112,
+        "p99": 31.813112,
+        "count": 20
+      }
+    },
+    {
+      "id": "IS-010",
+      "name": "Fault Isolation",
+      "unit": "bool",
+      "success": true,
+      "value": 1.000000,
+      "stats": {
+        "mean": 1.000000,
+        "std_dev": 0.000000,
+        "min": 1.000000,
+        "max": 1.000000,
+        "p50": 1.000000,
+        "p90": 1.000000,
+        "p95": 1.000000,
+        "p99": 1.000000,
+        "count": 1
+      }
+    },
+    {
+      "id": "LLM-001",
+      "name": "Attention Kernel Throughput",
+      "unit": "TFLOPS",
+      "success": true,
+      "value": 196.320866,
+      "stats": {
+        "mean": 196.320866,
+        "std_dev": 231.258147,
+        "min": 1.787345,
+        "max": 595.530687,
+        "p50": 110.376426,
+        "p90": 592.899941,
+        "p95": 593.883742,
+        "p99": 595.365582,
+        "count": 200
+      }
+    },
+    {
+      "id": "LLM-002",
+      "name": "KV Cache Allocation Speed",
+      "unit": "alloc/s",
+      "success": true,
+      "value": 79258.641243,
+      "stats": {
+        "mean": 79258.641243,
+        "std_dev": 45059.406127,
+        "min": 25398.283178,
+        "max": 143160.438472,
+        "p50": 97546.795637,
+        "p90": 143160.438472,
+        "p95": 143160.438472,
+        "p99": 143160.438472,
+        "count": 400
+      }
+    },
+    {
+      "id": "LLM-003",
+      "name": "Batch Size Scaling Efficiency",
+      "unit": "ratio",
+      "success": true,
+      "value": 0.672341,
+      "stats": {
+        "mean": 0.672341,
+        "std_dev": 0.342992,
+        "min": 0.159560,
+        "max": 1.036526,
+        "p50": 0.928926,
+        "p90": 1.036526,
+        "p95": 1.036526,
+        "p99": 1.036526,
+        "count": 120
+      }
+    },
+    {
+      "id": "LLM-004",
+      "name": "Token Generation Latency",
+      "unit": "ms",
+      "success": true,
+      "value": 0.007747,
+      "stats": {
+        "mean": 0.008330,
+        "std_dev": 0.003899,
+        "min": 0.007109,
+        "max": 0.039567,
+        "p50": 0.007747,
+        "p90": 0.008029,
+        "p95": 0.008548,
+        "p99": 0.039567,
+        "count": 100
+      }
+    },
+    {
+      "id": "LLM-005",
+      "name": "Memory Pool Efficiency",
+      "unit": "%",
+      "success": true,
+      "value": 5.891469,
+      "stats": {
+        "mean": 5.891469,
+        "std_dev": 0.000000,
+        "min": 5.891469,
+        "max": 5.891469,
+        "p50": 5.891469,
+        "p90": 5.891469,
+        "p95": 5.891469,
+        "p99": 5.891469,
+        "count": 100
+      }
+    },
+    {
+      "id": "LLM-006",
+      "name": "Multi-Stream Performance",
+      "unit": "%",
+      "success": true,
+      "value": 79.970997,
+      "stats": {
+        "mean": 79.970997,
+        "std_dev": 0.000000,
+        "min": 79.970997,
+        "max": 79.970997,
+        "p50": 79.970997,
+        "p90": 79.970997,
+        "p95": 79.970997,
+        "p99": 79.970997,
+        "count": 20
+      }
+    },
+    {
+      "id": "LLM-007",
+      "name": "Large Tensor Allocation Time",
+      "unit": "ms",
+      "success": true,
+      "value": 1.859734,
+      "stats": {
+        "mean": 16.284758,
+        "std_dev": 27.609680,
+        "min": 0.060850,
+        "max": 86.579475,
+        "p50": 1.859734,
+        "p90": 67.671277,
+        "p95": 86.417518,
+        "p99": 86.579475,
+        "count": 40
+      }
+    },
+    {
+      "id": "LLM-008",
+      "name": "Mixed Precision Throughput Ratio",
+      "unit": "ratio",
+      "success": true,
+      "value": 0.968647,
+      "stats": {
+        "mean": 0.968647,
+        "std_dev": 0.000000,
+        "min": 0.968647,
+        "max": 0.968647,
+        "p50": 0.968647,
+        "p90": 0.968647,
+        "p95": 0.968647,
+        "p99": 0.968647,
+        "count": 50
+      }
+    },
+    {
+      "id": "LLM-009",
+      "name": "Dynamic Batching Latency Variance",
+      "unit": "ratio",
+      "success": true,
+      "value": 0.811470,
+      "stats": {
+        "mean": 0.057375,
+        "std_dev": 0.046558,
+        "min": 0.026752,
+        "max": 0.187392,
+        "p50": 0.035840,
+        "p90": 0.133120,
+        "p95": 0.185760,
+        "p99": 0.187392,
+        "count": 100
+      }
+    },
+    {
+      "id": "LLM-010",
+      "name": "Multi-GPU Scaling Factor",
+      "unit": "ratio",
+      "success": true,
+      "value": 1.000000,
+      "stats": {
+        "mean": 1.000000,
+        "std_dev": 0.000000,
+        "min": 1.000000,
+        "max": 1.000000,
+        "p50": 1.000000,
+        "p90": 1.000000,
+        "p95": 1.000000,
+        "p99": 1.000000,
+        "count": 20
+      }
+    }
+  ]
+}

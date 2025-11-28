@@ -37,6 +37,8 @@ set(CUDA_SOURCES
     src/metrics/scheduling.cu
     src/metrics/fragmentation.cu
     src/metrics/error.cu
+    src/metrics/paper_features.cu
+    src/metrics/fcsp_features.cu
     src/systems/mig_simulator.c
 )
 

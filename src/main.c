@@ -70,6 +70,8 @@ typedef struct {
     bool run_scheduling;
     bool run_fragmentation;
     bool run_error;
+    bool run_paper;
+    bool run_fcsp;
     bool run_all_extended;
     bool worker_mode;
     char worker_test_id[64];
@@ -95,6 +97,8 @@ static void print_usage(const char *prog_name) {
     printf("  --scheduling          Run scheduling/context switch benchmarks\n");
     printf("  --fragmentation       Run memory fragmentation benchmarks\n");
     printf("  --error               Run error recovery benchmarks\n");
+    printf("  --paper               Run paper-inspired feature benchmarks\n");
+    printf("  --fcsp                Run FCSP advanced feature benchmarks\n");
     printf("  --all-extended        Run all extended benchmarks\n");
     printf("  --verbose             Verbose output\n");
     printf("  --help                Show this help\n");
@@ -117,6 +121,8 @@ static int parse_cli(int argc, char *argv[], cli_options_t *opts) {
     opts->run_scheduling = false;
     opts->run_fragmentation = false;
     opts->run_error = false;
+    opts->run_paper = false;
+    opts->run_fcsp = false;
     opts->run_all_extended = false;
     opts->worker_mode = false;
 
@@ -149,6 +155,8 @@ static int parse_cli(int argc, char *argv[], cli_options_t *opts) {
         {"scheduling",    no_argument,       0, 'S'},
         {"fragmentation", no_argument,       0, 'F'},
         {"error",         no_argument,       0, 'E'},
+        {"paper",         no_argument,       0, 'R'},
+        {"fcsp",          no_argument,       0, 'X'},
         {"all-extended",  no_argument,       0, 'A'},
         {"verbose",       no_argument,       0, 'v'},
         {"help",          no_argument,       0, 'h'},
@@ -158,7 +166,7 @@ static int parse_cli(int argc, char *argv[], cli_options_t *opts) {
     int opt;
     bool category_specified = false;
 
-    while ((opt = getopt_long(argc, argv, "s:c:o:i:w:OILBCPNSFEAvh", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "s:c:o:i:w:OILBCPNSFERXAvh", long_options, NULL)) != -1) {
         switch (opt) {
             case 's':
                 strncpy(opts->system_name, optarg, sizeof(opts->system_name) - 1);
@@ -245,6 +253,20 @@ static int parse_cli(int argc, char *argv[], cli_options_t *opts) {
                 }
                 opts->run_error = true;
                 break;
+            case 'R':
+                if (!category_specified) {
+                    opts->run_overhead = opts->run_isolation = opts->run_llm = false;
+                    category_specified = true;
+                }
+                opts->run_paper = true;
+                break;
+            case 'X':
+                if (!category_specified) {
+                    opts->run_overhead = opts->run_isolation = opts->run_llm = false;
+                    category_specified = true;
+                }
+                opts->run_fcsp = true;
+                break;
             case 'A':
                 /* Run all extended benchmarks */
                 opts->run_bandwidth = true;
@@ -254,6 +276,8 @@ static int parse_cli(int argc, char *argv[], cli_options_t *opts) {
                 opts->run_scheduling = true;
                 opts->run_fragmentation = true;
                 opts->run_error = true;
+                opts->run_paper = true;
+                opts->run_fcsp = true;
                 opts->run_all_extended = true;
                 break;
             case 'v':
@@ -623,6 +647,52 @@ int main(int argc, char *argv[]) {
         int error_count = 0;
         bench_run_error(&error_config, error_results, &error_count);
         CONVERT_EXTENDED_RESULTS(error_results, error_count);
+        printf("\n");
+    }
+
+    /* Run paper-inspired feature benchmarks */
+    if (opts.run_paper && !g_interrupted) {
+        printf("Running PAPER-INSPIRED FEATURE benchmarks...\n");
+        bench_config_t paper_config = {opts.iterations, opts.warmup, opts.verbose};
+        int paper_count = 0;
+        bench_run_paper_features(&paper_config, &all_results[result_count], &paper_count);
+        /* Set name and unit from definitions */
+        for (int i = 0; i < paper_count && (result_count + i) < TOTAL_METRIC_COUNT; i++) {
+            for (int j = 0; j < TOTAL_METRIC_COUNT; j++) {
+                if (strcmp(METRIC_DEFINITIONS[j].id, all_results[result_count + i].metric_id) == 0) {
+                    strncpy(all_results[result_count + i].name, METRIC_DEFINITIONS[j].name,
+                            sizeof(all_results[result_count + i].name) - 1);
+                    strncpy(all_results[result_count + i].unit,
+                            get_unit_string(METRIC_DEFINITIONS[j].unit),
+                            sizeof(all_results[result_count + i].unit) - 1);
+                    break;
+                }
+            }
+        }
+        result_count += paper_count;
+        printf("\n");
+    }
+
+    /* Run FCSP advanced feature benchmarks */
+    if (opts.run_fcsp && !g_interrupted) {
+        printf("Running FCSP ADVANCED FEATURE benchmarks...\n");
+        bench_config_t fcsp_config = {opts.iterations, opts.warmup, opts.verbose};
+        int fcsp_count = 0;
+        bench_run_fcsp_features(&fcsp_config, &all_results[result_count], &fcsp_count);
+        /* Set name and unit from definitions */
+        for (int i = 0; i < fcsp_count && (result_count + i) < TOTAL_METRIC_COUNT; i++) {
+            for (int j = 0; j < TOTAL_METRIC_COUNT; j++) {
+                if (strcmp(METRIC_DEFINITIONS[j].id, all_results[result_count + i].metric_id) == 0) {
+                    strncpy(all_results[result_count + i].name, METRIC_DEFINITIONS[j].name,
+                            sizeof(all_results[result_count + i].name) - 1);
+                    strncpy(all_results[result_count + i].unit,
+                            get_unit_string(METRIC_DEFINITIONS[j].unit),
+                            sizeof(all_results[result_count + i].unit) - 1);
+                    break;
+                }
+            }
+        }
+        result_count += fcsp_count;
         printf("\n");
     }
 
