@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <dirent.h>
+#include <math.h>
 
 #include "include/benchmark.h"
 #include "include/metrics.h"
@@ -66,6 +67,14 @@ static void escape_json_string(const char *input, char *output, size_t output_si
     output[j] = '\0';
 }
 
+static inline double sanitize_number(double v, bool *invalid_flag) {
+    if (isnan(v) || isinf(v)) {
+        if (invalid_flag) *invalid_flag = true;
+        return 0.0;
+    }
+    return v;
+}
+
 int report_save_json(const benchmark_result_t *result, const char *output_dir) {
     char dir_path[512];
     char file_path[512];
@@ -118,49 +127,71 @@ int report_save_json(const benchmark_result_t *result, const char *output_dir) {
         char escaped_name[256];
         escape_json_string(m->name, escaped_name, sizeof(escaped_name));
 
+        bool invalid = false;
+        double value = sanitize_number(m->value, &invalid);
+        double mean   = sanitize_number(m->stats.mean, &invalid);
+        double median = sanitize_number(m->stats.median, &invalid);
+        double stddev = sanitize_number(m->stats.std_dev, &invalid);
+        double min    = sanitize_number(m->stats.min, &invalid);
+        double max    = sanitize_number(m->stats.max, &invalid);
+        double p50    = sanitize_number(m->stats.p50, &invalid);
+        double p90    = sanitize_number(m->stats.p90, &invalid);
+        double p95    = sanitize_number(m->stats.p95, &invalid);
+        double p99    = sanitize_number(m->stats.p99, &invalid);
+        double p999   = sanitize_number(m->stats.p999, &invalid);
+        double mig_expected = sanitize_number(m->mig_expected, &invalid);
+        double mig_gap = sanitize_number(m->mig_gap_percent, &invalid);
+        double norm_score = sanitize_number(m->normalized_score, &invalid);
+        bool success = m->success && !invalid;
+
         fprintf(f, "    {\n");
         fprintf(f, "      \"id\": \"%s\",\n", m->metric_id);
         fprintf(f, "      \"name\": \"%s\",\n", escaped_name);
         fprintf(f, "      \"unit\": \"%s\",\n", m->unit);
-        fprintf(f, "      \"success\": %s,\n", m->success ? "true" : "false");
+        fprintf(f, "      \"success\": %s,\n", success ? "true" : "false");
 
-        if (m->success) {
+        if (success) {
             fprintf(f, "      \"statistics\": {\n");
             fprintf(f, "        \"count\": %lu,\n", m->stats.count);
-            fprintf(f, "        \"mean\": %.6f,\n", m->stats.mean);
-            fprintf(f, "        \"median\": %.6f,\n", m->stats.median);
-            fprintf(f, "        \"std_dev\": %.6f,\n", m->stats.std_dev);
-            fprintf(f, "        \"min\": %.6f,\n", m->stats.min);
-            fprintf(f, "        \"max\": %.6f,\n", m->stats.max);
-            fprintf(f, "        \"p50\": %.6f,\n", m->stats.p50);
-            fprintf(f, "        \"p90\": %.6f,\n", m->stats.p90);
-            fprintf(f, "        \"p95\": %.6f,\n", m->stats.p95);
-            fprintf(f, "        \"p99\": %.6f,\n", m->stats.p99);
-            fprintf(f, "        \"p999\": %.6f\n", m->stats.p999);
+            fprintf(f, "        \"mean\": %.6f,\n", mean);
+            fprintf(f, "        \"median\": %.6f,\n", median);
+            fprintf(f, "        \"std_dev\": %.6f,\n", stddev);
+            fprintf(f, "        \"min\": %.6f,\n", min);
+            fprintf(f, "        \"max\": %.6f,\n", max);
+            fprintf(f, "        \"p50\": %.6f,\n", p50);
+            fprintf(f, "        \"p90\": %.6f,\n", p90);
+            fprintf(f, "        \"p95\": %.6f,\n", p95);
+            fprintf(f, "        \"p99\": %.6f,\n", p99);
+            fprintf(f, "        \"p999\": %.6f\n", p999);
             fprintf(f, "      },\n");
 
             fprintf(f, "      \"mig_comparison\": {\n");
-            fprintf(f, "        \"mig_expected\": %.6f,\n", m->mig_expected);
-            fprintf(f, "        \"mig_gap_percent\": %.2f,\n", m->mig_gap_percent);
-            fprintf(f, "        \"normalized_score\": %.4f\n", m->normalized_score);
-            fprintf(f, "      }\n");
+            fprintf(f, "        \"mig_expected\": %.6f,\n", mig_expected);
+            fprintf(f, "        \"mig_gap_percent\": %.2f,\n", mig_gap);
+            fprintf(f, "        \"normalized_score\": %.4f\n", norm_score);
+            fprintf(f, "      },\n");
+            fprintf(f, "      \"value\": %.6f\n", value);
         } else {
             char escaped_error[1024];
             escape_json_string(m->error_message, escaped_error, sizeof(escaped_error));
-            fprintf(f, "      \"error\": \"%s\"\n", escaped_error);
+            if (invalid && escaped_error[0] == '\\0') {
+                strncpy(escaped_error, "invalid metric data (NaN/Inf)", sizeof(escaped_error) - 1);
+                escaped_error[sizeof(escaped_error) - 1] = '\\0';
+            }
+            fprintf(f, "      \"error\": \"%s\",\n", escaped_error);
+            fprintf(f, "      \"value\": %.6f\n", value);
         }
-
         fprintf(f, "    }%s\n", (i < result->num_metrics - 1) ? "," : "");
     }
     fprintf(f, "  ],\n");
 
     /* Summary scores */
     fprintf(f, "  \"summary\": {\n");
-    fprintf(f, "    \"overhead_score\": %.4f,\n", result->overhead_score);
-    fprintf(f, "    \"isolation_score\": %.4f,\n", result->isolation_score);
-    fprintf(f, "    \"llm_score\": %.4f,\n", result->llm_score);
-    fprintf(f, "    \"overall_score\": %.4f,\n", result->overall_score);
-    fprintf(f, "    \"mig_parity_percent\": %.2f\n", result->mig_parity_percent);
+    fprintf(f, "    \"overhead_score\": %.4f,\n", sanitize_number(result->overhead_score, NULL));
+    fprintf(f, "    \"isolation_score\": %.4f,\n", sanitize_number(result->isolation_score, NULL));
+    fprintf(f, "    \"llm_score\": %.4f,\n", sanitize_number(result->llm_score, NULL));
+    fprintf(f, "    \"overall_score\": %.4f,\n", sanitize_number(result->overall_score, NULL));
+    fprintf(f, "    \"mig_parity_percent\": %.2f\n", sanitize_number(result->mig_parity_percent, NULL));
     fprintf(f, "  }\n");
 
     fprintf(f, "}\n");

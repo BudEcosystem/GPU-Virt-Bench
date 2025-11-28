@@ -81,7 +81,7 @@ enable_testing()
 # Add test that runs a quick benchmark
 add_test(
     NAME quick_benchmark_test
-    COMMAND gpu-virt-bench --system native --iterations 10 --warmup 2 --metrics OH-001
+    COMMAND gpu-virt-bench --system native --iterations 10 --warmup 2 --overhead
 )
 
 # Custom targets

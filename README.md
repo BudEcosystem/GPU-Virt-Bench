@@ -4,6 +4,34 @@
 
 A comprehensive benchmarking framework for evaluating software-based GPU virtualization systems like HAMi-core, BUD-FCSP, and comparing against ideal MIG behavior.
 
+## Recent Updates
+
+### November 2025 - Comprehensive Benchmark Suite Release
+
+**New Metrics Added** (56 total metrics across 10 categories):
+- ✨ **Extended LLM Metrics**: Added multi-stream performance, memory pool efficiency, and dynamic batching impact metrics tailored for transformer workloads
+- ✨ **Memory Bandwidth Isolation**: 4 new metrics (BW-001 to BW-004) for measuring bandwidth fairness and contention
+- ✨ **Cache Isolation**: 4 new metrics (CACHE-001 to CACHE-004) for L2 cache sharing analysis
+- ✨ **PCIe Bandwidth**: 4 new metrics (PCIE-001 to PCIE-004) for host-device transfer performance
+- ✨ **NCCL/P2P Communication**: 4 new metrics (NCCL-001 to NCCL-004) for multi-GPU communication efficiency
+- ✨ **Scheduling Metrics**: 4 new metrics (SCHED-001 to SCHED-004) for context switching and concurrency
+- ✨ **Memory Fragmentation**: 3 new metrics (FRAG-001 to FRAG-003) for fragmentation impact tracking
+- ✨ **Error Recovery**: 3 new metrics (ERR-001 to ERR-003) for fault isolation and recovery testing
+
+**Key Findings from FCSP vs HAMi Benchmarks**:
+- 🚀 **FCSP Context Creation**: 1000× faster (78µs vs 84ms) - critical for auto-scaling LLM deployments
+- 🎯 **Memory Limit Accuracy**: FCSP achieves 99.89% vs HAMi's 91.46% - essential for multi-tenant stability
+- ⚡ **Enforcement Speed**: FCSP 3600× faster (0.3µs vs 1.1ms) - prevents latency cascades
+- 🔒 **Noisy Neighbor Isolation**: FCSP shows 4.74% impact at 25% GPU slice vs HAMi's 14.38% (3× better)
+- 📊 **Multi-Tenant Suitability**: FCSP enables 4 tenants/GPU at 25% slices with <5% interference; HAMi limited to 2 tenants at 50%
+
+**Benchmark Results Available**:
+- 120+ individual test runs across 25%, 50%, and 75% GPU slices
+- Complete FCSP vs HAMi comparison data
+- Detailed analysis reports in `results/` directory
+
+**For detailed comparison**: See [FCSP vs HAMi Comparison](https://github.com/BudEcosystem/bud_fcsp/blob/main/fcsp_hami_comparison.md) for comprehensive analysis of LLM workload performance.
+
 ## Overview
 
 This tool measures **56 performance metrics** across **10 categories** to provide comprehensive evaluation of GPU virtualization systems:

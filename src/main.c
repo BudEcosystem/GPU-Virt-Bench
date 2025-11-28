@@ -296,6 +296,11 @@ static const char* get_unit_string(metric_unit_t unit) {
 }
 
 /* Save results to JSON */
+static double sanitize_double(double v) {
+    if (isnan(v) || isinf(v)) return 0.0;
+    return v;
+}
+
 static int save_json(const char *filepath, const char *system_name,
                      metric_result_t *results, int count, double duration) {
     FILE *f = fopen(filepath, "w");
@@ -331,26 +336,41 @@ static int save_json(const char *filepath, const char *system_name,
     fprintf(f, "  \"metrics\": [\n");
     for (int i = 0; i < count; i++) {
         metric_result_t *m = &results[i];
+        bool invalid = false;
+        double value = sanitize_double(m->value);
+        if (isnan(m->value) || isinf(m->value)) invalid = true;
+        double mean = sanitize_double(m->stats.mean);
+        double stddev = sanitize_double(m->stats.std_dev);
+        double min = sanitize_double(m->stats.min);
+        double max = sanitize_double(m->stats.max);
+        double p50 = sanitize_double(m->stats.p50);
+        double p90 = sanitize_double(m->stats.p90);
+        double p95 = sanitize_double(m->stats.p95);
+        double p99 = sanitize_double(m->stats.p99);
+        unsigned long cnt = (unsigned long)m->stats.count;
+        bool success = m->valid && !invalid;
+
         fprintf(f, "    {\n");
         fprintf(f, "      \"id\": \"%s\",\n", m->metric_id);
         fprintf(f, "      \"name\": \"%s\",\n", m->name);
         fprintf(f, "      \"unit\": \"%s\",\n", m->unit);
-        fprintf(f, "      \"success\": %s,\n", m->valid ? "true" : "false");
-        if (m->valid) {
-            fprintf(f, "      \"value\": %.6f,\n", m->value);
+        fprintf(f, "      \"success\": %s,\n", success ? "true" : "false");
+        if (success) {
+            fprintf(f, "      \"value\": %.6f,\n", value);
             fprintf(f, "      \"stats\": {\n");
-            fprintf(f, "        \"mean\": %.6f,\n", m->stats.mean);
-            fprintf(f, "        \"std_dev\": %.6f,\n", m->stats.std_dev);
-            fprintf(f, "        \"min\": %.6f,\n", m->stats.min);
-            fprintf(f, "        \"max\": %.6f,\n", m->stats.max);
-            fprintf(f, "        \"p50\": %.6f,\n", m->stats.p50);
-            fprintf(f, "        \"p90\": %.6f,\n", m->stats.p90);
-            fprintf(f, "        \"p95\": %.6f,\n", m->stats.p95);
-            fprintf(f, "        \"p99\": %.6f,\n", m->stats.p99);
-            fprintf(f, "        \"count\": %lu\n", (unsigned long)m->stats.count);
+            fprintf(f, "        \"mean\": %.6f,\n", mean);
+            fprintf(f, "        \"std_dev\": %.6f,\n", stddev);
+            fprintf(f, "        \"min\": %.6f,\n", min);
+            fprintf(f, "        \"max\": %.6f,\n", max);
+            fprintf(f, "        \"p50\": %.6f,\n", p50);
+            fprintf(f, "        \"p90\": %.6f,\n", p90);
+            fprintf(f, "        \"p95\": %.6f,\n", p95);
+            fprintf(f, "        \"p99\": %.6f,\n", p99);
+            fprintf(f, "        \"count\": %lu\n", cnt);
             fprintf(f, "      }\n");
         } else {
-            fprintf(f, "      \"error\": \"%s\"\n", m->error_msg);
+            const char *err = invalid ? "invalid metric data (NaN/Inf)" : m->error_msg;
+            fprintf(f, "      \"error\": \"%s\"\n", err ? err : "unknown error");
         }
         fprintf(f, "    }%s\n", (i < count - 1) ? "," : "");
     }
