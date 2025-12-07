@@ -16,6 +16,7 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -O2")
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CUDAToolkit_INCLUDE_DIRS})
+include_directories(${CMAKE_SOURCE_DIR}/../bud_fcsp/src/uvm)
 
 # Source files
 set(SOURCES
@@ -23,6 +24,12 @@ set(SOURCES
     src/utils/statistics.c
     src/utils/process.c
     src/utils/config.c
+    ${CMAKE_SOURCE_DIR}/../bud_fcsp/src/uvm/idle_detector.c
+    ${CMAKE_SOURCE_DIR}/../bud_fcsp/src/uvm/pressure_monitor.c
+    ${CMAKE_SOURCE_DIR}/../bud_fcsp/src/uvm/transfer_manager.c
+    ${CMAKE_SOURCE_DIR}/../bud_fcsp/src/uvm/eviction_policy.c
+    ${CMAKE_SOURCE_DIR}/../bud_fcsp/src/uvm/prefetch_manager.c
+    ${CMAKE_SOURCE_DIR}/../bud_fcsp/src/graph/multi_graph_manager.c
 )
 
 set(CUDA_SOURCES
@@ -39,6 +46,13 @@ set(CUDA_SOURCES
     src/metrics/error.cu
     src/metrics/paper_features.cu
     src/metrics/fcsp_features.cu
+    src/metrics/uvm_benchmarks.cu
+    src/metrics/idle_detector_bench.cu
+    src/metrics/pressure_monitor_bench.cu
+    src/metrics/transfer_manager_bench.cu
+    src/metrics/eviction_policy_bench.cu
+    src/metrics/prefetch_manager_bench.cu
+    src/metrics/multi_graph_bench.cu
     src/systems/mig_simulator.c
 )
 

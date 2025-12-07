@@ -19,8 +19,8 @@ extern "C" {
  * ============================================================================
  */
 
-/* Total number of defined metrics (30 original + 26 new + 6 paper + 12 fcsp = 74) */
-#define TOTAL_METRIC_COUNT 74
+/* Total number of defined metrics (30 original + 26 new + 6 paper + 12 fcsp + 10 uvm = 84) */
+#define TOTAL_METRIC_COUNT 84
 
 /* Overhead metrics: OH-001 to OH-010 */
 #define METRIC_OH_KERNEL_LAUNCH_LATENCY     "OH-001"
@@ -138,6 +138,18 @@ extern "C" {
 #define METRIC_FCSP_ATTENTION_PATTERN        "FCSP-010"
 #define METRIC_FCSP_FFN_PATTERN              "FCSP-011"
 #define METRIC_FCSP_MIXED_WORKLOAD           "FCSP-012"
+
+/* UVM CPU Offloading metrics: UVM-001 to UVM-010 */
+#define METRIC_UVM_PAGE_FAULT_RATE           "UVM-001"
+#define METRIC_UVM_PREFETCH_HIT_RATE         "UVM-002"
+#define METRIC_UVM_TRANSFER_HIDING           "UVM-003"
+#define METRIC_UVM_CPU_MEM_OVERHEAD          "UVM-004"
+#define METRIC_UVM_EVICTION_LATENCY          "UVM-005"
+#define METRIC_UVM_PREFETCH_LATENCY          "UVM-006"
+#define METRIC_UVM_OOM_PREVENTION            "UVM-007"
+#define METRIC_UVM_BANDWIDTH_UTIL            "UVM-008"
+#define METRIC_UVM_THRASHING                 "UVM-009"
+#define METRIC_UVM_PRESSURE_RESPONSE         "UVM-010"
 
 /*
  * ============================================================================
@@ -777,6 +789,88 @@ static const metric_definition_t METRIC_DEFINITIONS[TOTAL_METRIC_COUNT] = {
         .unit = METRIC_UNIT_THROUGHPUT,
         .higher_is_better = true,
     },
+
+    /* ========== UVM CPU OFFLOADING METRICS (UVM-001 to UVM-010) ========== */
+    {
+        .id = "UVM-001",
+        .name = "Page Fault Rate",
+        .description = "Number of page faults per second when accessing evicted memory. Lower is better.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_THROUGHPUT,
+        .higher_is_better = false,
+    },
+    {
+        .id = "UVM-002",
+        .name = "Prefetch Hit Rate",
+        .description = "Percentage of prefetches that were used within 100ms. Higher indicates better prediction.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = true,
+    },
+    {
+        .id = "UVM-003",
+        .name = "Transfer Latency Hiding",
+        .description = "Percentage of transfer time overlapped with compute. >100% means fully hidden.",
+        .category = METRIC_CATEGORY_LLM,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = true,
+    },
+    {
+        .id = "UVM-004",
+        .name = "CPU Memory Overhead",
+        .description = "Peak CPU memory used for offloading as percentage of GPU memory limit.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = false,
+    },
+    {
+        .id = "UVM-005",
+        .name = "Eviction Latency",
+        .description = "Time to evict 100MB from GPU to CPU memory.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_MILLISECONDS,
+        .higher_is_better = false,
+    },
+    {
+        .id = "UVM-006",
+        .name = "Prefetch Latency",
+        .description = "Time to prefetch 100MB from CPU to GPU memory.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_MILLISECONDS,
+        .higher_is_better = false,
+    },
+    {
+        .id = "UVM-007",
+        .name = "OOM Prevention Success",
+        .description = "Percentage of OOMs prevented through eviction. 100% means perfect.",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = true,
+    },
+    {
+        .id = "UVM-008",
+        .name = "Bandwidth Utilization",
+        .description = "Percentage of PCIe bandwidth used by UVM transfers.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = false,
+    },
+    {
+        .id = "UVM-009",
+        .name = "Thrashing Detection",
+        .description = "Percentage of allocations with repeated evict-prefetch cycles.",
+        .category = METRIC_CATEGORY_ISOLATION,
+        .unit = METRIC_UNIT_PERCENTAGE,
+        .higher_is_better = false,
+    },
+    {
+        .id = "UVM-010",
+        .name = "Memory Pressure Response Time",
+        .description = "Time from pressure threshold to eviction start.",
+        .category = METRIC_CATEGORY_OVERHEAD,
+        .unit = METRIC_UNIT_MILLISECONDS,
+        .higher_is_better = false,
+    },
 };
 
 /*
@@ -875,6 +969,17 @@ static const mig_expected_value_t MIG_EXPECTED_VALUES[] = {
     {"FCSP-010", 1.0, 100.0, "Attention pattern ~1 TFLOPS (varies by GPU)"},
     {"FCSP-011", 1.0, 100.0, "FFN pattern ~1 TFLOPS (varies by GPU)"},
     {"FCSP-012", 100.0, 50.0, "Mixed workload ~100 ops/sec"},
+    /* UVM CPU offloading metrics */
+    {"UVM-001", 50.0, 100.0, "Page fault rate ~50 faults/sec (with UVM)"},
+    {"UVM-002", 85.0, 20.0, "Prefetch hit rate ~85% (good prediction)"},
+    {"UVM-003", 80.0, 30.0, "Transfer hiding ~80% overlap with compute"},
+    {"UVM-004", 15.0, 50.0, "CPU memory overhead ~15% of GPU limit"},
+    {"UVM-005", 3.0, 50.0, "Eviction latency ~3ms for 100MB (PCIe Gen4)"},
+    {"UVM-006", 8.0, 50.0, "Prefetch latency ~8ms for 100MB"},
+    {"UVM-007", 100.0, 5.0, "OOM prevention ~100% (perfect with UVM)"},
+    {"UVM-008", 20.0, 50.0, "Bandwidth utilization ~20% of PCIe"},
+    {"UVM-009", 3.0, 100.0, "Thrashing rate ~3% (minimal with good config)"},
+    {"UVM-010", 0.5, 100.0, "Pressure response ~0.5ms (fast eviction trigger)"},
 };
 
 #define MIG_EXPECTED_VALUE_COUNT (sizeof(MIG_EXPECTED_VALUES) / sizeof(MIG_EXPECTED_VALUES[0]))

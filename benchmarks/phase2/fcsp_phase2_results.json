@@ -1,0 +1,297 @@
+{
+  "benchmark_version": "1.0.0",
+  "timestamp": "2025-12-02T15:28:56Z",
+  "system_name": "fcsp_phase2",
+  "duration_seconds": 209.481,
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 3080",
+    "compute_capability": "8.6",
+    "total_memory_mb": 0,
+    "sm_count": 68
+  },
+  "hami_detected": false,
+  "metrics": [
+    {
+      "id": "FCSP-001",
+      "name": "Affinity Complementary Efficiency",
+      "unit": "%",
+      "success": true,
+      "value": 144.372610,
+      "stats": {
+        "mean": 143.923978,
+        "std_dev": 1.480453,
+        "min": 137.224518,
+        "max": 144.877138,
+        "p50": 144.372610,
+        "p90": 144.720752,
+        "p95": 144.734312,
+        "p99": 144.877138,
+        "count": 50
+      }
+    },
+    {
+      "id": "FCSP-002",
+      "name": "Affinity Conflict Detection",
+      "unit": "ratio",
+      "success": true,
+      "value": 1.659992,
+      "stats": {
+        "mean": 1.665073,
+        "std_dev": 0.021495,
+        "min": 1.651880,
+        "max": 1.784230,
+        "p50": 1.659992,
+        "p90": 1.669713,
+        "p95": 1.670079,
+        "p99": 1.784230,
+        "count": 50
+      }
+    },
+    {
+      "id": "FCSP-003",
+      "name": "Adaptive SM Response Time",
+      "unit": "ms",
+      "success": true,
+      "value": 0.223011,
+      "stats": {
+        "mean": 0.191205,
+        "std_dev": 0.043055,
+        "min": 0.137713,
+        "max": 0.239919,
+        "p50": 0.223011,
+        "p90": 0.236764,
+        "p95": 0.239919,
+        "p99": 0.239919,
+        "count": 20
+      }
+    },
+    {
+      "id": "FCSP-004",
+      "name": "Adaptive SM Efficiency",
+      "unit": "GB/s",
+      "success": true,
+      "value": 595.345774,
+      "stats": {
+        "mean": 594.032057,
+        "std_dev": 4.282785,
+        "min": 572.413192,
+        "max": 596.292669,
+        "p50": 595.345774,
+        "p90": 596.109933,
+        "p95": 596.194666,
+        "p99": 596.292669,
+        "count": 30
+      }
+    },
+    {
+      "id": "FCSP-005",
+      "name": "UVM Allocation Overhead",
+      "unit": "ratio",
+      "success": true,
+      "value": 0.020984,
+      "stats": {
+        "mean": 0.021242,
+        "std_dev": 0.001919,
+        "min": 0.019507,
+        "max": 0.036101,
+        "p50": 0.020984,
+        "p90": 0.022330,
+        "p95": 0.022809,
+        "p99": 0.036101,
+        "count": 100
+      }
+    },
+    {
+      "id": "FCSP-006",
+      "name": "UVM Prefetch Effectiveness",
+      "unit": "ratio",
+      "success": true,
+      "value": 130.361784,
+      "stats": {
+        "mean": 126.318116,
+        "std_dev": 11.630224,
+        "min": 89.994879,
+        "max": 136.844582,
+        "p50": 130.361784,
+        "p90": 133.625341,
+        "p95": 133.881103,
+        "p99": 136.844582,
+        "count": 50
+      }
+    },
+    {
+      "id": "FCSP-007",
+      "name": "UVM Transfer Overlap Efficiency",
+      "unit": "%",
+      "success": true,
+      "value": 101.758551,
+      "stats": {
+        "mean": 101.606373,
+        "std_dev": 2.099935,
+        "min": 97.603816,
+        "max": 105.728325,
+        "p50": 101.758551,
+        "p90": 104.619275,
+        "p95": 105.340300,
+        "p99": 105.728325,
+        "count": 30
+      }
+    },
+    {
+      "id": "FCSP-008",
+      "name": "UVM Memory Pressure Handling",
+      "unit": "ms",
+      "success": true,
+      "value": 9914.718270,
+      "stats": {
+        "mean": 9498.065748,
+        "std_dev": 1781.702420,
+        "min": 1733.948055,
+        "max": 9966.233053,
+        "p50": 9914.718270,
+        "p90": 9953.790085,
+        "p95": 9966.233053,
+        "p99": 9966.233053,
+        "count": 20
+      }
+    },
+    {
+      "id": "FCSP-009",
+      "name": "Stream Activation Latency",
+      "unit": "ms",
+      "success": true,
+      "value": 6.043875,
+      "stats": {
+        "mean": 6.042110,
+        "std_dev": 0.110144,
+        "min": 5.819497,
+        "max": 6.231547,
+        "p50": 6.043875,
+        "p90": 6.219015,
+        "p95": 6.226918,
+        "p99": 6.231547,
+        "count": 50
+      }
+    },
+    {
+      "id": "FCSP-010",
+      "name": "Attention Pattern Throughput",
+      "unit": "TFLOPS",
+      "success": true,
+      "value": 0.171813,
+      "stats": {
+        "mean": 0.160931,
+        "std_dev": 0.037055,
+        "min": 0.016392,
+        "max": 0.174117,
+        "p50": 0.171813,
+        "p90": 0.172811,
+        "p95": 0.172982,
+        "p99": 0.174117,
+        "count": 100
+      }
+    },
+    {
+      "id": "FCSP-011",
+      "name": "FFN Pattern Throughput",
+      "unit": "TFLOPS",
+      "success": true,
+      "value": 141519.999411,
+      "stats": {
+        "mean": 140172.455089,
+        "std_dev": 9576.374290,
+        "min": 47251.784376,
+        "max": 143610.885872,
+        "p50": 141519.999411,
+        "p90": 142612.817940,
+        "p95": 142888.664783,
+        "p99": 143610.885872,
+        "count": 100
+      }
+    },
+    {
+      "id": "FCSP-012",
+      "name": "Mixed Workload Orchestration",
+      "unit": "ops/s",
+      "success": false,
+      "error": "CUDA allocation failed"
+    },
+    {
+      "id": "IDLE-001",
+      "name": "Idle Detection Accuracy",
+      "unit": "%",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "IDLE-002",
+      "name": "Idle Detection Latency",
+      "unit": "ms",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "IDLE-003",
+      "name": "Multi-Stream Scalability",
+      "unit": "%",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "IDLE-004",
+      "name": "Thread Safety",
+      "unit": "%",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "IDLE-005",
+      "name": "Performance Overhead",
+      "unit": "us/launch",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "PRESSURE-001",
+      "name": "Pressure Level Accuracy",
+      "unit": "%",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "PRESSURE-002",
+      "name": "Pressure Update Overhead",
+      "unit": "ns",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "PRESSURE-003",
+      "name": "Hysteresis Correctness",
+      "unit": "%",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "PRESSURE-004",
+      "name": "Callback Latency",
+      "unit": "ns",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "PRESSURE-005",
+      "name": "Thread Safety",
+      "unit": "bool",
+      "success": false,
+      "error": ""
+    },
+    {
+      "id": "PRESSURE-006",
+      "name": "Eviction Recommendation Accuracy",
+      "unit": "%",
+      "success": false,
+      "error": ""
+    }
+  ]
+}

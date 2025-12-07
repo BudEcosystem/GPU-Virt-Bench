@@ -10,9 +10,13 @@ CUDA_PATH ?= /usr/local/cuda
 CUDA_INC := $(CUDA_PATH)/include
 CUDA_LIB := $(CUDA_PATH)/lib64
 
+# FCSP paths (for FCSP feature benchmarks)
+FCSP_PATH ?= ../bud_fcsp
+FCSP_INC := $(FCSP_PATH)/src
+
 # Compiler flags
-CFLAGS := -Wall -Wextra -O2 -I./src -I$(CUDA_INC)
-NVCCFLAGS := -O2 -I./src -I$(CUDA_INC)
+CFLAGS := -Wall -Wextra -O2 -I./src -I$(CUDA_INC) -I$(FCSP_INC) -I$(FCSP_INC)/uvm -I$(FCSP_INC)/graph -I$(FCSP_INC)/shared
+NVCCFLAGS := -O2 -I./src -I$(CUDA_INC) -I$(FCSP_INC) -I$(FCSP_INC)/uvm -I$(FCSP_INC)/graph -I$(FCSP_INC)/shared
 
 # CUDA architectures (adjust based on your GPU)
 # 70=V100, 75=T4, 80=A100, 86=RTX3090, 89=RTX4090, 90=H100
@@ -22,7 +26,9 @@ CUDA_ARCH := -gencode arch=compute_70,code=sm_70 \
              -gencode arch=compute_86,code=sm_86
 
 # Libraries
-LDFLAGS := -L$(CUDA_LIB) -L/usr/lib/x86_64-linux-gnu -lcudart -lnvidia-ml -lm -lpthread -ldl
+# Note: FCSP library is linked for direct benchmarking of FCSP components
+FCSP_LIB := $(FCSP_PATH)/build
+LDFLAGS := -L$(CUDA_LIB) -L/usr/lib/x86_64-linux-gnu -L$(FCSP_LIB) -lcudart -lnvidia-ml -lm -lpthread -ldl -lvgpu -Xlinker -rpath -Xlinker $(FCSP_LIB)
 
 # Directories
 BUILD_DIR := build
@@ -47,7 +53,14 @@ CU_SOURCES := $(SRC_DIR)/utils/timing.cu \
               $(SRC_DIR)/metrics/nccl.cu \
               $(SRC_DIR)/metrics/pcie.cu \
               $(SRC_DIR)/metrics/scheduling.cu \
-              $(SRC_DIR)/metrics/paper_features.cu
+              $(SRC_DIR)/metrics/paper_features.cu \
+              $(SRC_DIR)/metrics/fcsp_features.cu \
+              $(SRC_DIR)/metrics/idle_detector_bench.cu \
+              $(SRC_DIR)/metrics/pressure_monitor_bench.cu \
+              $(SRC_DIR)/metrics/transfer_manager_bench.cu \
+              $(SRC_DIR)/metrics/eviction_policy_bench.cu \
+              $(SRC_DIR)/metrics/prefetch_manager_bench.cu \
+              $(SRC_DIR)/metrics/multi_graph_bench.cu
 
 # Object files
 C_OBJECTS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(C_SOURCES))

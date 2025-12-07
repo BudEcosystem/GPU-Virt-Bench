@@ -1,0 +1,48 @@
+# Makefile for Graph Optimizer Benchmarks
+
+NVCC = nvcc
+CC = gcc
+
+CUDA_PATH = /usr/local/cuda
+CUDA_INC = -I$(CUDA_PATH)/include
+CUDA_LIB = -L$(CUDA_PATH)/lib64 -lcudart -lcuda
+
+CFLAGS = -O2 -Wall -Wextra -pthread
+NVCC_FLAGS = -O2 -arch=sm_70
+
+FCSP_DIR = ../bud_fcsp
+FCSP_INC = -I$(FCSP_DIR)/src
+GRAPH_OPT_SRC = $(FCSP_DIR)/src/graph/graph_optimizer.c
+
+SRC_DIR = src/metrics
+BUILD_DIR = build
+
+# Source files
+BENCH_SRC = $(SRC_DIR)/graph_optimizer_bench.cu
+GRAPH_OPT_OBJ = $(BUILD_DIR)/graph_optimizer.o
+BENCH_OBJ = $(BUILD_DIR)/graph_optimizer_bench.o
+
+# Target
+TARGET = $(BUILD_DIR)/graph_optimizer_bench
+
+all: $(BUILD_DIR) $(TARGET)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(GRAPH_OPT_OBJ): $(GRAPH_OPT_SRC)
+	$(CC) $(CFLAGS) $(CUDA_INC) $(FCSP_INC) -c $< -o $@
+
+$(BENCH_OBJ): $(BENCH_SRC)
+	$(NVCC) $(NVCC_FLAGS) $(FCSP_INC) -c $< -o $@
+
+$(TARGET): $(GRAPH_OPT_OBJ) $(BENCH_OBJ)
+	$(NVCC) $(NVCC_FLAGS) $^ -o $@ $(CUDA_LIB) -lpthread -lm
+
+clean:
+	rm -rf $(BUILD_DIR)
+
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: all clean run

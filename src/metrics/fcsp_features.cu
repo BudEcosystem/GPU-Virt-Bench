@@ -25,6 +25,16 @@
 #include "include/metrics.h"
 
 /*
+ * External benchmark runners
+ */
+extern "C" int run_idle_detector_benchmarks(benchmark_config_t *config, metric_result_t *results, int max_results);
+extern "C" int run_pressure_monitor_benchmarks(benchmark_config_t *config, metric_result_t *results, int max_results);
+extern "C" void run_transfer_manager_benchmarks(void);
+extern "C" void run_eviction_policy_benchmarks(void);
+extern "C" void run_prefetch_manager_benchmarks(void);
+extern "C" void run_multi_graph_benchmarks(void);
+
+/*
  * ============================================================================
  * CUDA Kernels for Workload Classification Testing
  * ============================================================================
@@ -1331,7 +1341,33 @@ void bench_run_fcsp_features(bench_config_t *config, metric_result_t *results, i
     printf("Running FCSP-012: Mixed Workload Orchestration\n");
     bench_fcsp_mixed_workload(&results[idx++]);
 
+    /* Idle Detector Benchmarks */
+    printf("\nRunning Idle Detector Benchmarks...\n");
+    benchmark_config_t bench_config = {};
+    bench_config.options.iterations = config->iterations;
+    bench_config.options.warmup_iterations = 10; // Default warmup
+    bench_config.options.verbose = config->verbose;
+
+    int idle_count = run_idle_detector_benchmarks(&bench_config, &results[idx], TOTAL_METRIC_COUNT - idx);
+    idx += idle_count;
+
+    int pressure_count = run_pressure_monitor_benchmarks(&bench_config, &results[idx], TOTAL_METRIC_COUNT - idx);
+    idx += pressure_count;
+
+    // Run transfer manager benchmarks
+    run_transfer_manager_benchmarks();
+
+    // Run eviction policy benchmarks
+    run_eviction_policy_benchmarks();
+
+    // Run prefetch manager benchmarks
+    run_prefetch_manager_benchmarks();
+
+    // Run multi-graph multi-tenant benchmarks
+    run_multi_graph_benchmarks();
+
     *count = idx;
 
-    printf("FCSP Feature benchmarks completed: %d/12 metrics\n\n", idx);
+    printf("FCSP Feature benchmarks completed: %d metrics (12 FCSP + %d Idle + %d Pressure + Transfer + Eviction + Prefetch + MultiGraph)\n\n",
+           idx, idle_count, pressure_count);
 }
